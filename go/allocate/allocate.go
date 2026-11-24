@@ -1,21 +1,14 @@
-// Package allocate splits an integer amount into parts proportional to weights.
 package allocate
 
 import "errors"
 
 var (
-	// ErrNoWeights is returned when no weights are given.
-	ErrNoWeights = errors.New("allocate: no weights")
-	// ErrNegativeWeight is returned when any weight is negative.
-	ErrNegativeWeight = errors.New("allocate: negative weight")
-	// ErrZeroTotalWeight is returned when all weights are zero.
+	ErrNoWeights       = errors.New("allocate: no weights")
+	ErrNegativeWeight  = errors.New("allocate: negative weight")
 	ErrZeroTotalWeight = errors.New("allocate: weights sum to zero")
-	// ErrNegativeAmount is returned when the amount is negative.
-	ErrNegativeAmount = errors.New("allocate: negative amount")
+	ErrNegativeAmount  = errors.New("allocate: negative amount")
 )
 
-// Split divides amount into len(weights) parts proportional to weights.
-// The parts always sum to amount; any remainder goes to the earliest parts.
 func Split(amount int64, weights []int64) ([]int64, error) {
 	if amount < 0 {
 		return nil, ErrNegativeAmount

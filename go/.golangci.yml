@@ -33,6 +33,8 @@ linters:
       check-type-assertions: true
       check-blank: true
   exclusions:
+    presets:
+      - comments    # project rule: no comments, so never demand doc comments
     rules:
       - path: _test\.go
         linters: [funlen, dupl]

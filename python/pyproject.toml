@@ -29,7 +29,7 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "D",       # docstring rules force boilerplate comments (slop); write docs where they add value
+    "D",       # project rule: no docstrings
     "COM812",  # conflicts with formatter
     "ISC001",  # conflicts with formatter
     "CPY",     # copyright headers
