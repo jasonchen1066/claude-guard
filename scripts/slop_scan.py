@@ -1,5 +1,8 @@
 """Reject patterns that let low-quality code slip past the other gates.
 
+In product code (python/, go/) any comment or docstring is rejected; only shebangs, Python
+coding lines and Go //go: and //line directives are allowed.
+
 Usage: slop_scan.py [FILE ...]   (no args = scan the whole repo)
 Exit 1 with one line per finding.
 """
@@ -7,8 +10,10 @@ Exit 1 with one line per finding.
 from __future__ import annotations
 
 import ast
+import io
 import re
 import sys
+import tokenize
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,6 +36,14 @@ GO_BANNED = [
 GO_TEST_FUNC = re.compile(r"^func (Test\w*)\(t \*testing\.T\) \{$", re.MULTILINE)
 GO_ASSERT = re.compile(r"\bt\.(Error|Errorf|Fatal|Fatalf|Fail|FailNow)\(")
 PY_ASSERT_CALL = re.compile(r"^(assert_|pytest\.(raises|warns|fail))")
+PY_CODING = re.compile(r"^#.*coding[:=]\s*[-\w.]+")
+PY_CODING_MAX_LINE = 2
+GO_LEXEME = re.compile(
+    r'"(?:\\.|[^"\\\n])*"|`[^`]*`|\'(?:\\.|[^\'\\\n])*\'|//[^\n]*|/\*.*?\*/',
+    re.DOTALL,
+)
+GO_ALLOWED_COMMENT_PREFIXES = ("//go:", "//line ")
+PRODUCT_DIRS = {"python", "go"}
 SELF_NAME = "slop_scan.py"
 
 
@@ -75,6 +88,42 @@ def scan_go_tests(path: Path, text: str) -> list[str]:
     return findings
 
 
+def _py_comment_allowed(lineno: int, comment: str) -> bool:
+    return (lineno == 1 and comment.startswith("#!")) or (
+        lineno <= PY_CODING_MAX_LINE and PY_CODING.match(comment) is not None
+    )
+
+
+def scan_python_comments(path: Path, text: str) -> list[str]:
+    tokens = tokenize.generate_tokens(io.StringIO(text).readline)
+    findings = [
+        f"{path}:{tok.start[0]}: comment (project rule: no comments)"
+        for tok in tokens
+        if tok.type == tokenize.COMMENT and not _py_comment_allowed(tok.start[0], tok.string)
+    ]
+    findings += [
+        f"{path}:{node.lineno}: docstring or string-as-comment (project rule: no comments)"
+        for node in ast.walk(ast.parse(text, filename=str(path)))
+        if isinstance(node, ast.Expr)
+        and isinstance(node.value, ast.Constant)
+        and isinstance(node.value.value, str)
+    ]
+    return findings
+
+
+def scan_go_comments(path: Path, text: str) -> list[str]:
+    return [
+        f"{path}:{text.count(chr(10), 0, lexeme.start()) + 1}: comment (project rule: no comments)"
+        for lexeme in GO_LEXEME.finditer(text)
+        if lexeme.group().startswith(("//", "/*"))
+        and not lexeme.group().startswith(GO_ALLOWED_COMMENT_PREFIXES)
+    ]
+
+
+def _is_product_code(rel: Path) -> bool:
+    return bool(rel.parts) and rel.parts[0] in PRODUCT_DIRS
+
+
 def scan_file(path: Path) -> list[str]:
     if path.name == SELF_NAME or not path.is_file():
         return []
@@ -84,11 +133,15 @@ def scan_file(path: Path) -> list[str]:
         findings = scan_lines(rel, text, PY_BANNED)
         if path.name.startswith("test_") or path.name.endswith("_test.py"):
             findings += scan_python_tests(rel, text)
+        if _is_product_code(rel):
+            findings += scan_python_comments(rel, text)
         return findings
     if path.suffix == ".go":
         findings = scan_lines(rel, text, GO_BANNED)
         if path.name.endswith("_test.go"):
             findings += scan_go_tests(rel, text)
+        if _is_product_code(rel):
+            findings += scan_go_comments(rel, text)
         return findings
     return []
 

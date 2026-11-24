@@ -13,10 +13,10 @@
     "python/pyproject.toml": "99c6a233c5b3202954cdbcb7d102e9a652ee52b94afd9611a44118575774ac6e",
     "python/uv.lock": "e9f3a224962ee117c9df1f275e7b8527135f881ba675326444cc574708e8e2f8",
     "scripts/gate.sh": "066f09b7f67a216d9d97ce38c23bd462339d9b4655b0a9d2701c9601d8b68e02",
-    "scripts/guard.py": "a905fa6cf2810f594e27fdc78258a1790eaaae002204424060a737e806bdb502",
+    "scripts/guard.py": "f6f1ef240a139d8834fe1ebfabc62fd55e05fcaefea1d766082188446d886154",
     "scripts/ruff.toml": "4ffd5fa2a9d1f92d909a63aaae15b7bfc72301c5e47fdbbf4a03276239f915e7",
-    "scripts/selftest.sh": "5a5400717be20d63886edde554e0f5ac1d1f4135e3f587e7f81c713085b52632",
-    "scripts/slop_scan.py": "4094671a7057692d1e80388138993fd21a2cefff7268816e7df3495ff3dd6b03"
+    "scripts/selftest.sh": "0ba82c31d411104d0d972410b5cc1a1c55fb61c8c040ded5ba24d78f88f204a1",
+    "scripts/slop_scan.py": "61154e4c63c82e69c578f6e898075e8a4e53fd6191f142de2f3e4776711488a8"
   },
   "tests": null
 }

@@ -21,7 +21,8 @@ vulture, pytest with ≥ 90% branch coverage, gofmt, golangci-lint (almost all l
 ≥ 90% coverage, the tooling's own lint/types, and in `full` mode mutation testing for both languages.
 
 Slop scan (`scripts/slop_scan.py`) rejects `# type: ignore`, `# noqa`, `pragma: no cover`, `//nolint`,
-skipped/xfail tests, and test functions that cannot fail (no assertion).
+skipped/xfail tests, test functions that cannot fail (no assertion), and any comment or docstring in
+`python/` and `go/` (only shebangs, coding lines and `//go:` / `//line` directives are allowed).
 
 ## Workflow
 
@@ -35,7 +36,7 @@ make unlock-tests         # next feature
 ```
 
 Changed a gate config yourself (thresholds, linters, dependencies)? Run `make seal` to accept it.
-`make selftest` injects 29 known-bad changes and proves each one is caught.
+`make selftest` injects known-bad changes and proves each one is caught.
 
 Optional cross-model review: `codex exec "review git diff HEAD for bugs, weak tests and slop"`.
 

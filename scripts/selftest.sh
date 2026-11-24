@@ -60,6 +60,16 @@ expect_gate "skipped test" fast "slop scan"
 sed -i 's/    return total$/    return total  # type: ignore/' "$PARSE"
 expect_gate "type: ignore suppression" fast "slop scan"
 
+sed -i 's/^    total = 0$/    total = 0  # running sum/' "$PARSE"
+expect_gate "inline comment" fast "slop scan"
+
+sed -i 's/^def parse_duration(text: str) -> int:$/def parse_duration(text: str) -> int:\n    """Parse a duration."""/' "$PARSE"
+expect_gate "docstring" fast "slop scan"
+
+printf '\n\nURL = "http://example.com/#anchor"\nPATTERN = "# not a comment"\n' >>"$PARSE"
+bash scripts/gate.sh fast >"$OUT" 2>&1 && result "'#' inside strings allowed" 1 || result "'#' inside strings allowed" 0
+restore
+
 cat >>"$PARSE" <<'EOF'
 
 
@@ -97,11 +107,22 @@ EOF
 expect_gate "weak tests with 100% coverage" full "py mutation"
 
 echo "== go =="
-printf '\n// Even splits amount equally, ignoring the error.\nfunc Even(amount int64, n int) []int64 {\n\tparts, _ := Split(amount, make([]int64, n))\n\treturn parts\n}\n' >>"$GOSRC"
+printf '\nfunc Even(amount int64, n int) []int64 {\n\tparts, _ := Split(amount, make([]int64, n))\n\treturn parts\n}\n' >>"$GOSRC"
 expect_gate "ignored error" fast "go lint"
 
 sed -i 's/^func Split(/\/\/nolint:gocyclo\nfunc Split(/' "$GOSRC"
 expect_gate "nolint suppression" fast "slop scan"
+
+sed -i 's/^func Split(/\/\/ Split divides an amount.\nfunc Split(/' "$GOSRC"
+expect_gate "doc comment" fast "slop scan"
+
+sed -i 's/^\treturn parts, nil$/\treturn parts, nil \/* done *\//' "$GOSRC"
+expect_gate "block comment" fast "slop scan"
+
+printf '\n//go:generate echo ok\nvar homepage = "https://example.com // not a comment"\n\nfunc Homepage() string { return homepage }\n' >>"$GOSRC"
+printf '\nfunc TestHomepage(t *testing.T) {\n\tt.Parallel()\n\n\tif allocate.Homepage() == "" {\n\t\tt.Error("empty homepage")\n\t}\n}\n' >>"$GOTEST"
+bash scripts/gate.sh fast >"$OUT" 2>&1 && result "go directive and '//' in string allowed" 1 || result "go directive and '//' in string allowed" 0
+restore
 
 printf '\nfunc TestNothing(t *testing.T) {\n\tt.Parallel()\n\t_, _ = allocate.Split(1, []int64{1})\n}\n' >>"$GOTEST"
 expect_gate "test without assertion" fast "slop scan"
@@ -164,7 +185,7 @@ printf '\n\ndef answer() -> int:\n    return "42"\n' >>"$PARSE"
 expect_hook_block "post-edit catches type error" post_edit.py \
   "{\"tool_name\":\"Edit\",\"tool_input\":{\"file_path\":\"$ROOT/$PARSE\"}}"
 
-printf '\n// Even splits amount equally, ignoring the error.\nfunc Even(amount int64, n int) []int64 {\n\tparts, _ := Split(amount, make([]int64, n))\n\treturn parts\n}\n' >>"$GOSRC"
+printf '\nfunc Even(amount int64, n int) []int64 {\n\tparts, _ := Split(amount, make([]int64, n))\n\treturn parts\n}\n' >>"$GOSRC"
 expect_hook_block "post-edit catches ignored Go error" post_edit.py \
   "{\"tool_name\":\"Edit\",\"tool_input\":{\"file_path\":\"$ROOT/$GOSRC\"}}"
 
@@ -172,6 +193,9 @@ printf '\n\ndef answer() -> int:\n    return "42"\n' >>"$PARSE"
 expect_hook_block "Stop blocked while gates red" stop_gate.py '{"hook_event_name":"Stop"}'
 
 echo "== allowed (must NOT block) =="
+mkdir -p scripts/__pycache__ && touch scripts/__pycache__/stale.cpython-311.pyc
+python3 -I scripts/guard.py verify >"$OUT" 2>&1 && result "cache files ignored by tamper check" 1 || result "cache files ignored by tamper check" 0
+rm -rf scripts/__pycache__
 echo "{\"tool_name\":\"Edit\",\"tool_input\":{\"file_path\":\"$ROOT/$PARSE\"}}" \
   | python3 -I .claude/hooks/pre_tool.py >"$OUT" 2>&1 && result "Edit source file allowed" 1 || result "Edit source file allowed" 0
 echo '{"tool_name":"Bash","tool_input":{"command":"make check"}}' \
