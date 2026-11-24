@@ -25,7 +25,10 @@ This repo has automated quality gates. Hooks run them on every edit and before y
   Exception: pass`, no `_ = err`.
 - No dead code, no commented-out code, no speculative abstractions, no unused parameters,
   no "just in case" options. Do only what was asked.
-- Comments explain *why*, never restate *what* the code does. No banner or changelog comments.
+- No comments: no inline/block comments, docstrings, doc comments, TODOs, banners or
+  commented-out code. Names, types, small functions and tests carry the meaning. Only
+  tool-required syntax is allowed (shebangs, `//go:build`, `//go:generate`, `//go:embed`).
+  If something cannot be made clear in code, tell the human in your reply.
 - No new files, modules or layers unless the task needs them. Prefer editing existing code.
 - Keep functions small (complexity limits are enforced). Split by responsibility, not by line count.
 - If a requirement is ambiguous or a test looks wrong, stop and ask. Do not guess and do not

@@ -9,10 +9,6 @@ class DurationError(ValueError):
 
 
 def parse_duration(text: str) -> int:
-    """Parse a duration like ``"1h30m"`` into seconds.
-
-    Units must appear at most once and in descending order (d, h, m, s).
-    """
     if not text:
         msg = "empty duration"
         raise DurationError(msg)
