@@ -193,6 +193,9 @@ printf '\n\ndef answer() -> int:\n    return "42"\n' >>"$PARSE"
 expect_hook_block "Stop blocked while gates red" stop_gate.py '{"hook_event_name":"Stop"}'
 
 echo "== allowed (must NOT block) =="
+mkdir -p scripts/__pycache__ && touch scripts/__pycache__/stale.cpython-311.pyc
+python3 -I scripts/guard.py verify >"$OUT" 2>&1 && result "cache files ignored by tamper check" 1 || result "cache files ignored by tamper check" 0
+rm -rf scripts/__pycache__
 echo "{\"tool_name\":\"Edit\",\"tool_input\":{\"file_path\":\"$ROOT/$PARSE\"}}" \
   | python3 -I .claude/hooks/pre_tool.py >"$OUT" 2>&1 && result "Edit source file allowed" 1 || result "Edit source file allowed" 0
 echo '{"tool_name":"Bash","tool_input":{"command":"make check"}}' \

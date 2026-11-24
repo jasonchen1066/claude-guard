@@ -40,7 +40,7 @@ CONFIG_PATTERNS = [
     "go/go.sum",
 ]
 TEST_PATTERNS = ["python/tests/*.py", "python/tests/**/*.py", "go/*_test.go", "go/**/*_test.go"]
-SKIP_DIRS = {".venv", "mutants", ".git"}
+SKIP_DIRS = {".venv", "mutants", ".git", "__pycache__", ".pytest_cache", ".ruff_cache"}
 
 
 def _matches(rel: str, patterns: list[str]) -> bool:
