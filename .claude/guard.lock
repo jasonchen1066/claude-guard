@@ -1,0 +1,22 @@
+{
+  "config": {
+    ".claude/agents/slop-reviewer.md": "3d95a66465986e3b35b14c602201ebe990e504ce105664eda4487ac095c80849",
+    ".claude/hooks/post_edit.py": "d6cd671a82b3ab67b3cb446908b1560d307580523a9e6c00d72805150179c8f6",
+    ".claude/hooks/pre_tool.py": "0768a67eecab82d211d7be865aa74ee1eb7185f43a1faa174a66a79efaabf6cf",
+    ".claude/hooks/stop_gate.py": "1653349d34b3bfe4101e6bcd11c9b476e43ab459da8f163322cd82758e8ae776",
+    ".claude/settings.json": "dd9b4ed6943f3627e58c6b99a29ef436dde3696b3bc3fe9ada634fe0102ecfca",
+    ".github/workflows/ci.yml": "057951a27f4f991ed8264c6699e2846ebd219f07460476b921ef451fcac61dbd",
+    "CLAUDE.md": "e59620cc32a44bf07472d0e5f02202aabc04b114b05241ed3425f9305a6ddc9e",
+    "Makefile": "e04a5fc6ea1b5cc3d70a00f07c7e8b140b4456f3a29baedbe6449e117f9eb72e",
+    "go/.golangci.yml": "4380fd1d0b016dcc4289b1531b60db7b4f077a9e19fe0db807bdc6bcc8deea9d",
+    "go/go.mod": "e6a38da0fa53b0f1914e4dec8b7cb1b995567398d3fe9ba7571952ed33359fed",
+    "python/pyproject.toml": "2e5af2de74bdfabc0abaaa752c41ce9c5e9d4973b27848f5045a723756cac4fb",
+    "python/uv.lock": "e9f3a224962ee117c9df1f275e7b8527135f881ba675326444cc574708e8e2f8",
+    "scripts/gate.sh": "066f09b7f67a216d9d97ce38c23bd462339d9b4655b0a9d2701c9601d8b68e02",
+    "scripts/guard.py": "a905fa6cf2810f594e27fdc78258a1790eaaae002204424060a737e806bdb502",
+    "scripts/ruff.toml": "4ffd5fa2a9d1f92d909a63aaae15b7bfc72301c5e47fdbbf4a03276239f915e7",
+    "scripts/selftest.sh": "5a5400717be20d63886edde554e0f5ac1d1f4135e3f587e7f81c713085b52632",
+    "scripts/slop_scan.py": "4094671a7057692d1e80388138993fd21a2cefff7268816e7df3495ff3dd6b03"
+  },
+  "tests": null
+}

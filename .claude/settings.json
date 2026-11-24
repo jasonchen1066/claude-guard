@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_tool.py\"" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_edit.py\"", "timeout": 120 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop_gate.py\"", "timeout": 600 }
+        ]
+      }
+    ]
+  }
+}

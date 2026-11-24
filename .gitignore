@@ -1,0 +1,10 @@
+python/.venv/
+python/mutants/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+gremlins*.json
+.claude/.gate_state.json
+.claude/settings.local.json

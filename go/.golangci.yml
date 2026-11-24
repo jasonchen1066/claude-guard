@@ -1,0 +1,47 @@
+version: "2"
+
+linters:
+  default: all
+  disable:
+    - depguard      # needs a per-project allowlist; enable when you have one
+    - exhaustruct   # forces every struct field to be spelled out
+    - varnamelen    # flags idiomatic short names (i, w, tc)
+    - wsl           # whitespace style, deprecated
+    - wsl_v5        # whitespace style, noisy
+    - nlreturn      # whitespace style
+    - noinlineerr   # bans `if err := f(); err != nil`, which is idiomatic
+    - ireturn
+    - mnd           # magic-number noise in table tests
+    - gochecknoglobals # sentinel errors are package vars by convention
+    - gomodguard    # deprecated in favour of gomodguard_v2
+  settings:
+    cyclop:
+      max-complexity: 10
+    gocyclo:
+      min-complexity: 10
+    gocognit:
+      min-complexity: 15
+    funlen:
+      lines: 60
+      statements: 40
+    dupl:
+      threshold: 80
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters: [funlen, dupl]
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

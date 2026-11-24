@@ -1,0 +1,11 @@
+# Lint config for the guard tooling itself (scripts/, .claude/hooks/): same strict rules as
+# the product code, minus rules that do not fit small CLI scripts.
+extend = "../python/pyproject.toml"
+
+[lint]
+extend-ignore = [
+    "T201",  # CLIs report via print
+    "INP001", # standalone scripts, not packages
+    "S603",  # subprocess with fixed argv we build ourselves
+    "S607",  # tools resolved from PATH on purpose
+]
